@@ -1,0 +1,24 @@
+@use "sass:map";
+
+$rangeThumb: 18px;
+$rangeHeight: 8px;
+
+$colors: (
+  canvas: (
+    bg: #eee,
+    border: #ccc
+  ),
+  range: (
+    color: #007bff,
+    bg: #ccc
+  ),
+  button: (
+    bg: #007bff,
+    color: #fff,
+    hover: #0069d9
+  )
+);
+
+@function getColor($listKey, $key) {
+  @return map.get($colors, $listKey, $key);
+}
