@@ -1,0 +1,3 @@
+import REGEX_BASE64_IMAGE from './REGEX_BASE64_IMAGE';
+
+export { REGEX_BASE64_IMAGE };

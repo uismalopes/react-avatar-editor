@@ -1,15 +1,22 @@
-import { CANVAS_SIZE } from '../constants';
 import type { Offset } from '../types';
 
-interface IProps {
+interface GetZoomOffsetParams {
   newScale: number;
   scale: number;
   offset: Offset;
+  canvasWidth: number;
+  canvasHeight: number;
 }
 
-function getZoomOffset({ newScale, scale, offset }: IProps) {
-  const centerX = CANVAS_SIZE / 2;
-  const centerY = CANVAS_SIZE / 2;
+function getZoomOffset({
+  newScale,
+  scale,
+  offset,
+  canvasHeight,
+  canvasWidth,
+}: GetZoomOffsetParams) {
+  const centerX = canvasWidth / 2;
+  const centerY = canvasHeight / 2;
 
   const zoomRatio = newScale / scale;
 
