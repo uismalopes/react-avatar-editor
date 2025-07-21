@@ -1,69 +1,41 @@
-import { useRef, useState } from 'react';
-import { AvatarEditor, type AvatarEditorRef } from 'react-avatar-editor';
-import './styles/main.scss';
+import React, { useEffect, useRef, useState } from 'react';
+import { RoundAvatarEditor } from 'react-round-avatar';
 
 function App() {
-  const [image, setImage] = useState<string>('');
-  const onChangeImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const currentFile = event.target.files?.[0];
-    if (currentFile) {
-      const reader = new FileReader();
-      reader.readAsDataURL(currentFile);
+  const [file, setFile] = useState<File | string>('https://example.com/avatar.png');
+  const editorRef = useRef(null);
 
-      reader.onload = function () {
-        const data = this.result?.toString();
-        if (data) setImage(data);
-      };
-    }
-  };
+  useEffect(() => {
+    setFile('');
+  }, []);
 
-  const jacoRef = useRef<AvatarEditorRef>(null);
-
-  const [convertImage, setConvertImage] = useState<string>();
-
-  const onSave = () => {
-    const events = jacoRef.current;
-    if (events) {
-      setConvertImage(events.convert.toDataURL());
-    }
-  };
   return (
-    <section className="container">
-      <div className="my-5">
-        <div className="row justify-content-center">
-          <div className="col-4">
-            <div className="d-flex flex-column justify-content-center align-items-center">
-              <h1>React Avatar Editor</h1>
-              <div className="mb-3">
-                <input
-                  className="form-control"
-                  type="file"
-                  name="avatar-image"
-                  accept="image/png, image/jpeg"
-                  onChange={onChangeImage}
-                />
-              </div>
-              <div className="card">
-                <AvatarEditor ref={jacoRef} image={image} />
-              </div>
-            </div>
-            <div className="mt-5">
-              <div className="d-flex flex-column gap-3  align-items-center">
-                <div className="text-center">
-                  <button className="btn btn-primary" onClick={onSave} style={{ marginTop: 10 }}>
-                    Gerar imagem
-                  </button>
-                </div>
-                <h1 className="mt-4 text-center">Preview</h1>
-                <div className="w-75 text-center">
-                  <img src={convertImage} alt="" className="img-fluid" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <RoundAvatarEditor
+      ref={editorRef}
+      width={200}
+      height={200}
+      image={file}
+      crossOrigin="anonymous"
+      restoreButton={{
+        text: 'Restore',
+        className: 'restore-btn',
+        show: true,
+        onClick: () => alert('Restored!'),
+        disabled: false,
+      }}
+      inputRange={{
+        clasName: 'input-range',
+        disabled: false,
+        show: true,
+      }}
+      className="avatar-editor"
+      onMouseMove={() => console.log('Mouse moving')}
+      onMouseUp={() => console.log('Mouse up')}
+      onImageReady={(img) => console.log('Image ready', img)}
+      onPositionChange={(offset) => console.log('Position changed', offset)}
+      onScaleChange={(scale) => console.log('Scale changed', scale)}
+      onError={(error) => console.error('Error loading image', error)}
+    />
   );
 }
 

@@ -15,7 +15,13 @@ describe('getZoomOffset', () => {
     const newScale = 2;
     const offset: Offset = { x: 50, y: 100 };
 
-    const result = getZoomOffset({ newScale, scale, offset });
+    const result = getZoomOffset({
+      newScale,
+      scale,
+      offset,
+      canvasHeight: CANVAS_SIZE,
+      canvasWidth: CANVAS_SIZE,
+    });
 
     expect(result).toEqual(offset);
   });
@@ -30,7 +36,13 @@ describe('getZoomOffset', () => {
     // newOffsetY = 200 - (200 - 0) * 2 = 200 - 400 = -200
     const expected: Offset = { x: -200, y: -200 };
 
-    const result = getZoomOffset({ newScale, scale, offset });
+    const result = getZoomOffset({
+      newScale,
+      scale,
+      offset,
+      canvasHeight: CANVAS_SIZE,
+      canvasWidth: CANVAS_SIZE,
+    });
 
     expect(result).toEqual(expected);
   });
@@ -45,7 +57,13 @@ describe('getZoomOffset', () => {
     // newOffsetY = same
     const expected: Offset = { x: 0, y: 0 };
 
-    const result = getZoomOffset({ newScale, scale, offset });
+    const result = getZoomOffset({
+      newScale,
+      scale,
+      offset,
+      canvasHeight: CANVAS_SIZE,
+      canvasWidth: CANVAS_SIZE,
+    });
 
     expect(result).toEqual(expected);
   });
@@ -55,7 +73,13 @@ describe('getZoomOffset', () => {
     const newScale = 2;
     const offset: Offset = { x: center, y: center };
 
-    const result = getZoomOffset({ newScale, scale, offset });
+    const result = getZoomOffset({
+      newScale,
+      scale,
+      offset,
+      canvasHeight: CANVAS_SIZE,
+      canvasWidth: CANVAS_SIZE,
+    });
 
     // If already centered, result stays centered
     expect(result).toEqual({ x: center, y: center });

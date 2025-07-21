@@ -1,4 +1,7 @@
-import AvatarEditor from './avatar-editor.controller';
+import Editor from './editor.controller';
+import { withProvider } from './context/hoc';
 export * from './types';
 
-export { AvatarEditor };
+const RoundAvatarEditor = withProvider(Editor);
+
+export { RoundAvatarEditor };

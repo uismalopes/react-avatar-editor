@@ -1,91 +1,84 @@
-import { useCallback } from 'react';
-import type { RefObject, SetStateAction } from 'react';
+import { useState } from 'react';
 import { getNewOffsetFromMouseDrag, getZoomOffset } from '../library';
-import type { Offset } from '../types';
-import { IDrawParams } from './useDraw';
+import type { EditorProps, Offset } from '../types';
+import { DEFAULT_OFFSET } from '../constants';
+import { useEditorContext } from '../context/hooks';
 
-type OffsetSetter = (value: SetStateAction<Offset>) => void;
-type ScaleSetter = (value: SetStateAction<number>) => void;
+type Listeners = Pick<
+  EditorProps,
+  'onMouseMove' | 'onMouseUp' | 'onPositionChange' | 'onScaleChange'
+>;
 
 interface EventHookParams {
   offset: Offset;
   scale: number;
-  dragging: RefObject<boolean>;
-  lastPos: RefObject<Offset>;
-  setOffset: OffsetSetter;
-  setScale: ScaleSetter;
-  draw: ({ scale, offset }: IDrawParams) => void;
+  observerOffset?: (offset: Offset) => void;
+  observerScale?: (scale: number) => void;
 }
 
-function useEvents({
-  offset,
-  scale,
-  dragging,
-  lastPos,
-  setOffset,
-  setScale,
-  draw,
-}: EventHookParams) {
-  const handleZoomChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newScale = parseFloat(event.target.value);
-      const newOffset = getZoomOffset({ newScale, offset, scale });
+function useEvents({ offset, scale, observerOffset, observerScale }: EventHookParams) {
+  const { canvasHeight, canvasWidth, ...context } = useEditorContext();
 
-      setScale(newScale);
-      setOffset(newOffset);
-      draw({ scale: newScale, offset: newOffset });
-    },
-    [offset, scale, setScale, setOffset, draw]
-  );
-
-  const handleZoomInput = function (event: React.ChangeEvent<HTMLInputElement>) {
-    const newScale = parseFloat(event.target.value);
-    const progress = (newScale / parseFloat(event.target.max)) * 100;
-    console.log(progress);
-
-    event.target.style.background = `linear-gradient(to right, #f50 ${progress}%, #ccc ${progress}%)`;
+  const listeners: Listeners = {
+    onMouseMove: context.onMouseMove,
+    onMouseUp: context.onMouseUp,
+    onPositionChange: context.onPositionChange,
+    onScaleChange: context.onScaleChange,
   };
 
-  const handleMouseDown = useCallback(
-    (event: React.MouseEvent<HTMLCanvasElement>) => {
-      dragging.current = true;
-      lastPos.current = { x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY };
-    },
-    [dragging, lastPos]
-  );
+  const [dragging, setDragging] = useState<boolean>(false);
+  const [lastPos, setLastPos] = useState<Offset>(DEFAULT_OFFSET);
 
-  const handleMouseMove = useCallback(
-    (event: React.MouseEvent<HTMLCanvasElement>) => {
-      if (!dragging.current) return;
+  const handleZoomChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newScale = parseFloat(event.target.value);
+    const newOffset = getZoomOffset({ newScale, offset, scale, canvasHeight, canvasWidth });
+    observerOffset?.(newOffset);
+    observerScale?.(newScale);
 
-      const currentMouse = {
-        x: event.nativeEvent.offsetX,
-        y: event.nativeEvent.offsetY,
-      };
+    listeners.onScaleChange?.(newScale);
+  };
 
-      const newOffset = getNewOffsetFromMouseDrag({
-        currentMouse,
-        lastMouse: lastPos.current,
-        currentOffset: offset,
-      });
+  const handleMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    setDragging(true);
+    setLastPos({ x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY });
+  };
 
-      lastPos.current = currentMouse;
-      setOffset(newOffset);
-      draw({ scale, offset: newOffset });
-    },
-    [dragging, lastPos, offset, scale, setOffset, draw]
-  );
+  const handleMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    listeners.onMouseMove?.();
+    if (!dragging) return;
 
-  const handleMouseUp = useCallback(() => {
-    dragging.current = false;
-  }, [dragging]);
+    const currentMouse = {
+      x: event.nativeEvent.offsetX,
+      y: event.nativeEvent.offsetY,
+    };
+
+    const newOffset = getNewOffsetFromMouseDrag({
+      currentMouse,
+      lastMouse: lastPos,
+      currentOffset: offset,
+    });
+
+    setLastPos(currentMouse);
+    observerOffset?.(newOffset);
+    listeners.onPositionChange?.(newOffset);
+  };
+
+  const handleMouseUp = () => {
+    setDragging(false);
+    listeners.onMouseUp?.();
+  };
+
+  const resetStates = () => {
+    setDragging(false);
+    setLastPos(DEFAULT_OFFSET);
+  };
 
   return {
+    resetStates,
     handleZoomChange,
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
-    handleZoomInput,
   };
 }
 

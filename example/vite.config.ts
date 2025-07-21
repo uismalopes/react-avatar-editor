@@ -11,7 +11,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      'react-avatar-editor': resolve(__dirname, '../src'),
+      'react-round-avatar': resolve(__dirname, '../src'),
     },
   },
 });

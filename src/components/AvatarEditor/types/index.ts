@@ -1,6 +1,6 @@
 import type { Offset } from './Offset';
-import type { ReturnConvertCanvas } from './ReturnConvertCanvas';
-import type { AvatarEditorProps } from './AvatarEditorProps';
-import type { AvatarEditorRef } from './AvatarEditorRef';
+import type { EditorProps } from './EditorProps';
+import type { EditorRef } from './EditorRef';
+import type { ErrorLoadImage } from './ErrorLoadImage';
 
-export type { Offset, ReturnConvertCanvas, AvatarEditorProps, AvatarEditorRef };
+export type { Offset, EditorProps, EditorRef, ErrorLoadImage };

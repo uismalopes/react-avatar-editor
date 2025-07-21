@@ -1,0 +1,3 @@
+const DEFAULT_CANVAS_SIZE = 200;
+
+export default DEFAULT_CANVAS_SIZE;

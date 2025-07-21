@@ -1,14 +1,15 @@
-import { CANVAS_SIZE } from '../constants';
 import { Offset } from '../types';
 
 interface IProps {
   image: HTMLImageElement;
   scaleBase: number;
+  canvasWidth: number;
+  canvasHeight: number;
 }
 
-function getDefaultOffset({ image, scaleBase }: IProps): Offset {
-  const initialOffsetX = (CANVAS_SIZE - image.width * scaleBase) / 2;
-  const initialOffsetY = (CANVAS_SIZE - image.height * scaleBase) / 2;
+function getDefaultOffset({ image, scaleBase, canvasWidth, canvasHeight }: IProps): Offset {
+  const initialOffsetX = (canvasWidth - image.width * scaleBase) / 2;
+  const initialOffsetY = (canvasHeight - image.height * scaleBase) / 2;
   const initialOffset: Offset = {
     x: initialOffsetX,
     y: initialOffsetY,

@@ -1,0 +1,98 @@
+@use '../../../styles/variables.scss';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  canvas {
+    border-radius: 50%;
+    border: 2px solid variables.getColor('canvas', 'border');
+    background-color: variables.getColor('canvas', 'bg');
+    cursor: grab;
+    display: block;
+  }
+}
+
+.range {
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none; 
+    width: 100%;
+    cursor: pointer;
+    outline: none;
+    border-radius: 15px;
+    height: variables.$rangeHeight;
+    background: variables.getColor('range', 'bg');
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none; 
+      height: variables.$rangeThumb;
+      width: variables.$rangeThumb;
+      background-color: variables.getColor('range', 'color');
+      border-radius: 50%;
+      border: none;
+      transition: .2s ease-in-out;
+    }
+
+    &::-moz-range-thumb {
+      height: variables.$rangeThumb;
+      width: variables.$rangeThumb;
+      background-color: variables.getColor('range', 'color');
+      border-radius: 50%;
+      border: none;
+      
+      transition: .2s ease-in-out;
+    }
+
+    &::-webkit-slider-thumb:hover {
+      box-shadow: 0 0 0 10px rgba(variables.getColor('range', 'color'), 0.1)
+    }
+    &:active::-webkit-slider-thumb {
+      box-shadow: 0 0 0 13px rgba(variables.getColor('range', 'color'), 0.2)
+    }
+    &:focus::-webkit-slider-thumb {
+      box-shadow: 0 0 0 13px rgba(variables.getColor('range', 'color'), 0.2)
+    }
+
+    &::-moz-range-thumb:hover {
+      box-shadow: 0 0 0 10px rgba(variables.getColor('range', 'color'), 0.1)
+    }
+    &:active::-moz-range-thumb {
+      box-shadow: 0 0 0 13px rgba(variables.getColor('range', 'color'), 0.2)
+    }
+    &:focus::-moz-range-thumb {
+      box-shadow: 0 0 0 13px rgba(variables.getColor('range', 'color'), 0.2)    
+    }
+  }
+}
+
+.button {
+  text-align: center;
+  button {
+    padding: .375rem .75rem;
+    background-color: variables.getColor('button', 'bg');
+    border: 0;
+    border-radius: 2px;
+    color: variables.getColor('button', 'color');
+    cursor: pointer;
+    transition: all 250ms;
+
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+
+    &:hover {
+      background-color: variables.getColor('button', 'hover');
+    }
+  }
+}

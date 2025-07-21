@@ -1,69 +1,122 @@
-# React + TypeScript + Vite
+# React Round Avatar
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React Round Avatar is a lightweight and customizable React component for editing and cropping round/circular avatars. It supports zoom, crop, and drag functionalities, making it ideal for profile picture editors in web applications.
 
-Currently, two official plugins are available:
+<div style="width: 80%; margin: 0 auto;">
+<img src="./example/assets/editor-preview.gif">
+</div>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- Crop and zoom images in a circular area
+- Drag to reposition the image
+- Restore original image
+- Easy integration with React projects
+- TypeScript support
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Installation
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```sh
+npm install react-round-avatar
+# or
+pnpm add react-round-avatar
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Usage
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```tsx
+import React, { useRef, useState } from 'react';
+import { RoundAvatarEditor } from 'react-round-avatar';
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+function App() {
+  const [file, setFile] = useState<File | string>('https://example.com/avatar.png');
+  const editorRef = useRef(null);
+
+  return (
+    <RoundAvatarEditor
+      ref={editorRef}
+      width={200}
+      height={200}
+      image={file}
+      crossOrigin="anonymous"
+      restoreButton={{
+        text: 'Restore',
+        className: 'restore-btn',
+        show: true,
+        onClick: () => alert('Restored!'),
+        disabled: false,
+      }}
+      inputRange={{
+        clasName: 'input-range',
+        disabled: false,
+        show: true,
+      }}
+      className="avatar-editor"
+      onMouseMove={() => console.log('Mouse moving')}
+      onMouseUp={() => console.log('Mouse up')}
+      onImageReady={(img) => console.log('Image ready', img)}
+      onPositionChange={(offset) => console.log('Position changed', offset)}
+      onScaleChange={(scale) => console.log('Scale changed', scale)}
+      onError={(error) => console.error('Error loading image', error)}
+    />
+  );
+}
+
+export default App;
 ```
+
+## API
+
+### Props
+
+| Name               | Type                                     | Description                        |
+| ------------------ | ---------------------------------------- | ---------------------------------- |
+| `width`            | `number`                                 | Canvas width                       |
+| `height`           | `number`                                 | Canvas height                      |
+| `image`            | `string \| File`                         | Image source (file or URL)         |
+| `crossOrigin`      | `'' \| 'anonymous' \| 'use-credentials'` | Cross-origin attribute for image   |
+| `restoreButton`    | `RestoreButton`                          | Restore button options             |
+| `inputRange`       | `InputRange`                             | Input range options                |
+| `className`        | `string`                                 | Custom class name for editor       |
+| `onMouseMove`      | `() => void`                             | Mouse move event handler           |
+| `onMouseUp`        | `() => void`                             | Mouse up event handler             |
+| `onImageReady`     | `(image: HTMLImageElement) => void`      | Called when image is loaded        |
+| `onPositionChange` | `(offset: Offset) => void`               | Called when image position changes |
+| `onScaleChange`    | `(scale: number) => void`                | Called when zoom/scale changes     |
+| `onError`          | `(error: ErrorLoadImage) => void`        | Error callback                     |
+
+#### RestoreButton
+
+| Name        | Type         | Description             |
+| ----------- | ------------ | ----------------------- |
+| `text`      | `string`     | Button text             |
+| `className` | `string`     | Custom class for button |
+| `show`      | `boolean`    | Show/hide button        |
+| `onClick`   | `() => void` | Click handler           |
+| `disabled`  | `boolean`    | Disable button          |
+
+#### InputRange
+
+| Name       | Type      | Description                  |
+| ---------- | --------- | ---------------------------- |
+| `clasName` | `string`  | Custom class for input range |
+| `disabled` | `boolean` | Disable input range          |
+| `show`     | `boolean` | Show/hide input              |
+
+#### ErrorLoadImage
+
+| Type                        | Description             |
+| --------------------------- | ----------------------- |
+| `string`                    | Error message           |
+| `Event`                     | DOM event error         |
+| `ProgressEvent<FileReader>` | FileReader error event  |
+| `Error`                     | JavaScript Error object |
+
+### Methods
+
+- `getImage()`: Returns the current cropped image as a data URL.
+- `restoreImage()`: Restores the image to its initial state.
+
+## License
+
+MIT
